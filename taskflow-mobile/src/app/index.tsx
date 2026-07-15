@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useTasks } from '../hooks/useTasks';
 import { useFilter } from '../hooks/useFilter';
+import { useRouter } from 'expo-router';
+import { useAuth } from '../hooks/useAuth';
 import FilterBar from '../components/FilterBar';
 import TaskList from '../components/TaskList';
 import TaskModal from '../components/TaskModal';
@@ -19,7 +21,7 @@ function SplashScreen() {
   );
 }
 
-function Header({ total, done }: { total: number; done: number }) {
+function Header({ total, done, user, isLoggedIn, onLogin, onLogout }: any) {
   return (
     <View style={styles.header}>
       <View style={styles.headerTop}>
@@ -27,6 +29,21 @@ function Header({ total, done }: { total: number; done: number }) {
           <Text style={styles.headerLogoIcon}>⚡</Text>
           <Text style={styles.headerTitle}>TaskFlow</Text>
         </View>
+        
+        {isLoggedIn ? (
+          <View style={styles.authContainer}>
+            <Text style={styles.userEmail} numberOfLines={1}>{user?.email}</Text>
+            <Pressable onPress={onLogout} style={styles.authBtn}>
+              <Text style={styles.authBtnText}>Logout</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <Pressable onPress={onLogin} style={styles.authBtn}>
+            <Text style={styles.authBtnText}>Login for Cloud</Text>
+          </Pressable>
+        )}
+      </View>
+      <View style={styles.statsRow}>
         <Text style={styles.headerStats}>
           {done}/{total} done
         </Text>
@@ -40,6 +57,8 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
+  const router = useRouter();
+  const { isLoggedIn, user, logout } = useAuth();
   const { isLoaded, tasks, addTask, updateTask, deleteTask, toggleTask } = useTasks();
 
   const {
@@ -107,7 +126,14 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <Header total={totalCount} done={doneCount} />
+      <Header 
+        total={totalCount} 
+        done={doneCount} 
+        user={user}
+        isLoggedIn={isLoggedIn}
+        onLogin={() => router.push('/login')}
+        onLogout={logout}
+      />
 
       <FilterBar
         activePriority={activePriority}
@@ -198,6 +224,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     fontWeight: '500',
+  },
+  statsRow: {
+    marginTop: 8,
+  },
+  authContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  userEmail: {
+    fontSize: 12,
+    color: '#666',
+    maxWidth: 100,
+  },
+  authBtn: {
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  authBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#333',
   },
   fab: {
     position: 'absolute',

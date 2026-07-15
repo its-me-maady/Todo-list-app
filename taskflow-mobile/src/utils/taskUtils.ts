@@ -83,3 +83,30 @@ export function sortByPriority(tasks: Task[]): Task[] {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 }
+
+// ─── API Mappers ─────────────────────────────────────────────────────────────
+
+// Backend response → Mobile Task
+export function fromAPI(t: any): Task {
+  return {
+    id:          t.id,
+    title:       t.title,
+    description: t.description ?? '',
+    label:       t.label ?? '',
+    priority:    t.priority as Priority,
+    isCompleted: t.completed,
+    createdAt:   t.created_at,
+    updatedAt:   t.updated_at,
+  };
+}
+
+// Mobile form data → Backend request body
+export function toAPI(form: Partial<Task>) {
+  return {
+    title:       form.title,
+    description: form.description,
+    label:       form.label,
+    priority:    form.priority,
+    completed:   form.isCompleted,
+  };
+}
