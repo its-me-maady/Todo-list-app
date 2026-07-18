@@ -10,10 +10,12 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleLogin = async () => {
+    setErrorMsg('');
     if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
+      setErrorMsg('Please enter both email and password.');
       return;
     }
 
@@ -22,7 +24,7 @@ export default function LoginScreen() {
       await login(email, password);
       router.replace('/');
     } catch (err: any) {
-      Alert.alert('Login Failed', err.message || 'Invalid email or password');
+      setErrorMsg(err.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -32,6 +34,8 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back</Text>
       
+      {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
+
       <View style={styles.form}>
         <TextInput
           style={styles.input}
@@ -78,8 +82,17 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     color: '#1a1a1a',
-    marginBottom: 32,
+    marginBottom: 24,
     textAlign: 'center',
+  },
+  errorText: {
+    color: '#dc2626',
+    backgroundColor: '#fee2e2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   form: {
     gap: 16,

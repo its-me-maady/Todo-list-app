@@ -37,7 +37,7 @@ type registerInput struct {
 func (h *AuthHandler) Register(c *gin.Context) {
 	var input registerInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		utils.Error(c, http.StatusBadRequest, "invalid request")
+		utils.Error(c, http.StatusBadRequest, "Invalid email format or password too short (min 8 chars)")
 		return
 	}
 
@@ -56,9 +56,12 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		input.Email, hash,
 	).StructScan(&user)
 	if err != nil {
-		// Do NOT distinguish duplicate email from other errors — prevents enumeration.
 		log.Printf("register: insert error: %v", err)
-		utils.Error(c, http.StatusBadRequest, "invalid request")
+		if strings.Contains(err.Error(), "duplicate key value") {
+			utils.Error(c, http.StatusBadRequest, "Email is already registered")
+		} else {
+			utils.Error(c, http.StatusBadRequest, "Could not create account")
+		}
 		return
 	}
 

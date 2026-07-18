@@ -11,15 +11,17 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleRegister = async () => {
+    setErrorMsg('');
     if (!email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill out all fields.');
+      setErrorMsg('Please fill out all fields.');
       return;
     }
     
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
+      setErrorMsg('Passwords do not match.');
       return;
     }
 
@@ -28,7 +30,7 @@ export default function RegisterScreen() {
       await register(email, password);
       router.replace('/');
     } catch (err: any) {
-      Alert.alert('Registration Failed', err.message || 'An error occurred during registration.');
+      setErrorMsg(err.message || 'An error occurred during registration.');
     } finally {
       setLoading(false);
     }
@@ -38,6 +40,8 @@ export default function RegisterScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Create Account</Text>
       
+      {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
+
       <View style={styles.form}>
         <TextInput
           style={styles.input}
@@ -92,8 +96,17 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     color: '#1a1a1a',
-    marginBottom: 32,
+    marginBottom: 24,
     textAlign: 'center',
+  },
+  errorText: {
+    color: '#dc2626',
+    backgroundColor: '#fee2e2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   form: {
     gap: 16,
