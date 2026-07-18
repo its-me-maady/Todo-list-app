@@ -16,7 +16,7 @@ function SplashScreen() {
     <View style={styles.splash}>
       <Text style={styles.splashLogo}>⚡</Text>
       <Text style={styles.splashTitle}>TaskFlow</Text>
-      <Text style={styles.splashTagline}>Stay in the flow.</Text>
+      <Text style={styles.splashTagline}>Stay in the flow. (Demo)</Text>
     </View>
   );
 }
@@ -27,7 +27,7 @@ function Header({ total, done, user, isLoggedIn, onLogin, onLogout }: any) {
       <View style={styles.headerTop}>
         <View style={styles.headerLogo}>
           <Text style={styles.headerLogoIcon}>⚡</Text>
-          <Text style={styles.headerTitle}>TaskFlow</Text>
+          <Text style={styles.headerTitle}>TaskFlow Demo</Text>
         </View>
         
         {isLoggedIn ? (
